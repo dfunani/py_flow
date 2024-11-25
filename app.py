@@ -1,7 +1,10 @@
 from typing import Optional
 
+from components.complex import ComplexNode
+from components.primitive import PrimitiveNode
 from console.canvas import Canvas
 from console.window import Window
+from models.files import JsonFileManager
 from player.controls import Player
 from pygame import quit, time
 
@@ -42,4 +45,7 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    canvas_data = None
+    with open("./temp.json") as file:
+        data = JsonFileManager().read(file)
+        ComplexNode(data).draw()
