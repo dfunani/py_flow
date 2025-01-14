@@ -7,6 +7,7 @@ from console.window import Window
 from models.files import JsonFileManager
 from player.controls import Player
 from pygame import quit, time
+from models.types import Primitive
 
 
 class GameManager:
@@ -48,4 +49,8 @@ if __name__ == "__main__":
     canvas_data = None
     with open("./temp.json") as file:
         data = JsonFileManager().read(file)
-        ComplexNode(data).draw()
+        if isinstance(data, Primitive):
+            PrimitiveNode(data).draw()
+        else:
+            ComplexNode(data).draw()
+    main()
