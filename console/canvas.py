@@ -1,17 +1,38 @@
-from typing import Tuple
-
-from pygame import draw
+from enum import Enum
+from typing import Any, Dict, List, Tuple, TypedDict
+from pygame import Rect, draw
 from console.window import Window
 
+
+class NodeTypes(Enum):
+    PRIMITIVE = "primitive"
+    COMPLEX = "complex"
+
+
+
+class NodeData(TypedDict):
+    value: Any
+    type: Any
+
+class Node(TypedDict):
+    node: Rect
+    type: NodeTypes
+    data: NodeData
 
 class Canvas:
     __WIDTH = 20
     __SEGMENTS = 5
     __THIN_LINE = (1, (42, 42, 42))
     __THICK_LINE = (2, (58, 58, 58))
+    __NODE_COLORS = {
+        NodeTypes.PRIMITIVE: [(255, 255, 0), (0, 0, 0)],
+        NodeTypes.COMPLEX: [(0, 255, 255), (0, 0, 0)],
+    }
+    __NODE_WIDTHS = {NodeTypes.PRIMITIVE: 100, NodeTypes.COMPLEX: 50}
 
     def __init__(self, window: Window) -> None:
         self.window = window
+        self.nodes: List[Node] = []
 
     def draw(self):
         # here we create our grid.
@@ -50,3 +71,39 @@ class Canvas:
                 line = self.__THICK_LINE
 
             draw.line(self.window.screen, line[1], (left, y), (right, y), line[0])
+
+    def add_node(self, position: Tuple[int, int], node_type: NodeTypes, data: NodeData):
+        if node_type == NodeTypes.PRIMITIVE:
+            node = self.__generate_primitive_node(position)
+        else:
+            node = self.__generate_complex_node(position)
+
+        self.nodes.append({"node": node, "type": node_type, "data": data})
+
+    def draw_node(self):
+        for node in self.nodes:
+            draw.rect(
+                self.window.screen, self.__NODE_COLORS[node["type"]][0], node["node"]
+            )
+            self.window.screen.blit(
+                self.window.font.render(
+                    str(node["data"]["value"]), True, self.__NODE_COLORS[node["type"]][1]
+                ),
+                node["node"].topleft,
+            )
+            self.window.screen.blit(
+                self.window.font.render(
+                    str(node["data"]["type"]), True, self.__NODE_COLORS[node["type"]][1]
+                ),
+                (node["node"].topleft[0], node["node"].topleft[1] + 20),
+            )
+
+    def __generate_primitive_node(self, position: Tuple[int, int]):
+        x, y = position
+        node = Rect(x, y, 100, 100)
+        return node
+
+    def __generate_complex_node(self, position: Tuple[int, int]):
+        x, y = position
+        node = Rect(x, y, 100, 250)
+        return node

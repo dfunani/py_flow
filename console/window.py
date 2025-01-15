@@ -32,7 +32,7 @@ from typing import Optional
 #         self.setWindowTitle(self.__TITLE)
 
 
-from pygame import display, RESIZABLE, init
+from pygame import display, RESIZABLE, init, font
 
 
 class Window:
@@ -46,7 +46,12 @@ class Window:
             cls.__INSTANCE = super().__new__(cls)
             init()
             cls.display = display
+            cls.font = font.SysFont("Arial", 25)
+            
             cls.screen = cls.display.set_mode(cls.__SIZE, RESIZABLE)
             cls.display.set_caption(cls.__TITLE)
             cls.screen.fill(cls.__BACKGROUND_COLOR)
         return cls.__INSTANCE
+
+    def clear(self):
+        self.screen.fill(self.__BACKGROUND_COLOR)

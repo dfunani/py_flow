@@ -1,8 +1,9 @@
 from abc import ABC, abstractmethod
+from typing import Tuple
 
 
 class INode(ABC):
     @abstractmethod
-    def draw(self, offset: int = 1):
+    def draw(self, position: Tuple[int, int]):
         pass
 
